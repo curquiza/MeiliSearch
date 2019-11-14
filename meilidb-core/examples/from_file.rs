@@ -174,10 +174,11 @@ fn index_command(command: IndexCommand, database: Database) -> Result<(), Box<dy
 
         let mut writer = env.write_txn().unwrap();
         println!("committing update...");
+        let before_commit = Instant::now();
         let update_id = additions.finalize(&mut writer)?;
         writer.commit().unwrap();
         max_update_id = max_update_id.max(update_id);
-        println!("committed update {}", update_id);
+        println!("committed update {} after {:.2?}", update_id, before_commit.elapsed());
     }
 
     println!("Waiting for update {}", max_update_id);
